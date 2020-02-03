@@ -31,11 +31,19 @@ namespace CompileReplicateShedulingCsharp
                 compiledFiles compiledFileOnlist = input.compiledFiles.Find(x => x.id == targetId);
 
                 //Now get dependencies, inner dependent come first
-
+                List<compiledFiles> dependencies = new List<compiledFiles>();
+                foreach(string de in compiledFileOnlist.dependencies)
+                {
+                    dependencies.Add(input.compiledFiles.Find(x => x.id == de));
+                }
                 
+                //Now if this dependencies have further dependencies than add them also on the list and make unique list
+
             }
 
 
         }
+
+        
     }
 }
