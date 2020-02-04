@@ -35,7 +35,7 @@ namespace CompileReplicateShedulingCsharp
             
             
             long compilationSteps = 0;          
-            foreach (target target in input.targets)
+            foreach (target target in input.targetsBasedOnDeadline)
             {
                 listAllDependencies = new List<compiledFiles>();
                 listAllDependencies = listOfAllDependencies(target.targettedFile);
@@ -91,8 +91,7 @@ namespace CompileReplicateShedulingCsharp
             {
                 Console.WriteLine(line);
             }
-
-
+            
             //Calculate Points
 
 

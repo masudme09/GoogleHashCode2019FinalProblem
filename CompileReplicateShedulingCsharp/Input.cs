@@ -13,7 +13,8 @@ namespace CompileReplicateShedulingCsharp
         public int numberOfTargets { get; set; }
         public int numberOfServers { get; set; }
         public List<compiledFiles> compiledFiles = new List<compiledFiles>();
-        public List<target> targets = new List<target>();
+        public List<target> targetsBasedOnDeadline = new List<target>();
+        public List<target> targetsBasedOnGoalPoints = new List<target>();
         public List<Server> servers = new List<Server>();
 
        
@@ -44,11 +45,11 @@ namespace CompileReplicateShedulingCsharp
 
             for(int i=numberOfFiles*2+1;i<=numberOfFiles * 2+numberOfTargets;i++)//Adding target files
             {
-                targets.Add(new target(allContents[i], compiledFiles));
+                targetsBasedOnDeadline.Add(new target(allContents[i], compiledFiles));
             }
 
-            targets = targets.OrderBy(x => x.deadline).ToList();// to sort based on deadline
-
+            targetsBasedOnDeadline = targetsBasedOnDeadline.OrderBy(x => x.deadline).ToList();// to sort based on deadline
+            targetsBasedOnGoalPoints = targetsBasedOnDeadline.OrderByDescending(x => x.goalPoints).ToList();// to sort based on goalPoints
 
 
         }
