@@ -8,6 +8,8 @@ namespace CompileReplicateShedulingCsharp
 {
     class Program
     {
+        public static long clock = 0;
+        public static List<compiledFiles> listAllDependencies;
         static void Main(string[] args)
         {
             string filePath=Console.ReadLine();
@@ -20,28 +22,63 @@ namespace CompileReplicateShedulingCsharp
             //with time=compilation of this task + replication time..Do whatever smallest
             //If all dependencies of fist target finished write on console first target done with time stamp
 
-            long clock = 0;
-            long compilationSteps = 0;
-            List<target> targets = input.targets;
-            targets = targets.OrderBy(x => x.deadline).ToList();
-            foreach(target target in targets)
+            /*Target
+             * -Get dependencies all
+             * -Processing 
+             * 
+             * 
+             * 
+             * 
+             */
+
+                               
+            
+            
+            long compilationSteps = 0;          
+            foreach (target target in input.targets)
             {
-                string targetId = target.idOfTarget;
-                //Search with targetId on the files and get dependencies
-                compiledFiles compiledFileOnlist = input.compiledFiles.Find(x => x.id == targetId);
+                listAllDependencies = new List<compiledFiles>();
+                listAllDependencies = listOfAllDependencies(target.targettedFile);
 
-                //Now get dependencies, inner dependent come first
-                List<compiledFiles> dependencies = new List<compiledFiles>();
-                foreach(string de in compiledFileOnlist.dependencies)
+                /*
+                 * Test code to check dependencies
+                    foreach(compiledFiles compiledFiles in listAllDependencies)
+                    {
+                        Console.WriteLine(target.targettedFile.id+":\n"+compiledFiles.id+"\n");
+                    }
+                */
+                //assign dependencies to server and complete the target
+                foreach (Server server in input.servers)
                 {
-                    dependencies.Add(input.compiledFiles.Find(x => x.id == de));
-                }
+                    foreach (compiledFiles dependent in listAllDependencies)
+                    {
+                        if (dependent.compiled == false) //need to compile
+                        {
+                            server.processFile(dependent);
+                            compilationSteps++;
+                        }
+                        else //need to replicate or compile again..If compile again need to increase compilation steps
+                        {
+
+                        }
+                    }
+                }        
                 
-                //Now if this dependencies have further dependencies than add them also on the list and make unique list
-
             }
+            Console.ReadKey();
 
+        }
 
+        public static List<compiledFiles> listOfAllDependencies(compiledFiles target)
+        {
+            //listAllDependencies.Add(target);
+            foreach (compiledFiles dependencies in target.dependencies)
+            {
+                listAllDependencies.Add(dependencies);
+                listOfAllDependencies(dependencies);
+            }            
+
+            return listAllDependencies;
         }
 
         
