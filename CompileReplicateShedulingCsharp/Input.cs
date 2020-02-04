@@ -31,7 +31,7 @@ namespace CompileReplicateShedulingCsharp
             //Instantiate servers
             for(int i=0;i<numberOfServers;i++)
             {
-                servers.Add(new Server());
+                servers.Add(new Server(i));
             }
 
             for(int i=1; i<=numberOfFiles*2;i=i+2)//Adding compiled files
@@ -109,20 +109,23 @@ namespace CompileReplicateShedulingCsharp
 
     public class Server
     {
-        static int serverId=0;
+        public int serverId;
         //List<compiledFiles> onQue = new List<compiledFiles>();
         public List<compiledFiles> processedFiles = new List<compiledFiles>();
+        public long serverProcessTime = 0;
+        public static List<string> outputs = new List<string>();
 
-        public Server()
+        public Server(int id)
         {
-            serverId = serverId + 1;
+            serverId = id;
         }
 
         public void processFile(compiledFiles file)
         {
             processedFiles.Add(file);
             file.compiled = true;
-            
+            serverProcessTime = serverProcessTime + file.compilationTime;
+            outputs.Add(file.id + " " + serverId);
         }
     }
 }

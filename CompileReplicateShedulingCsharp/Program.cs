@@ -39,7 +39,7 @@ namespace CompileReplicateShedulingCsharp
             {
                 listAllDependencies = new List<compiledFiles>();
                 listAllDependencies = listOfAllDependencies(target.targettedFile);
-
+                listAllDependencies.Reverse();
                 /*
                  * Test code to check dependencies
                     foreach(compiledFiles compiledFiles in listAllDependencies)
@@ -48,36 +48,67 @@ namespace CompileReplicateShedulingCsharp
                     }
                 */
                 //assign dependencies to server and complete the target
-                foreach (Server server in input.servers)
+                //Selected server to process this target
+                List<Server> sortedServers = input.servers.OrderBy(x =>x.serverProcessTime).ToList();
+                Server selectedServer = sortedServers[0];
+
+                foreach (compiledFiles dependent in listAllDependencies)
                 {
-                    foreach (compiledFiles dependent in listAllDependencies)
+                    if (dependent.compiled == false) //need to compile
                     {
-                        if (dependent.compiled == false) //need to compile
+                        if(dependent==target.targettedFile)
                         {
-                            server.processFile(dependent);
+                            selectedServer.processFile(dependent);
+                        }
+                        else if(dependent.compilationTime<dependent.replicationTime)
+                        {
+                            selectedServer.processFile(dependent);
+                        }else if(dependent.compilationTime > dependent.replicationTime && sortedServers.Count>0)
+                        {
+                            sortedServers[1].processFile(dependent);
+                        }else
+                        {
+                            selectedServer.processFile(dependent);
+                        }
+                            
+                        compilationSteps++;
+                    }
+                    else //need to replicate or compile again..If compile again need to increase compilation steps
+                    {
+                        if(!selectedServer.processedFiles.Contains(dependent) && dependent.compilationTime<dependent.replicationTime)
+                        {
+                            selectedServer.processFile(dependent);
                             compilationSteps++;
                         }
-                        else //need to replicate or compile again..If compile again need to increase compilation steps
-                        {
-
-                        }
                     }
-                }        
+                }               
+                
                 
             }
+
+            Console.WriteLine(compilationSteps);
+            foreach(string line in Server.outputs)
+            {
+                Console.WriteLine(line);
+            }
+
+
+            //Calculate Points
+
+
             Console.ReadKey();
 
         }
 
         public static List<compiledFiles> listOfAllDependencies(compiledFiles target)
         {
-            //listAllDependencies.Add(target);
+            listAllDependencies.Add(target);
             foreach (compiledFiles dependencies in target.dependencies)
             {
-                listAllDependencies.Add(dependencies);
+                //listAllDependencies.Add(dependencies);
                 listOfAllDependencies(dependencies);
-            }            
-
+            }
+            //listAllDependencies.Reverse();
             return listAllDependencies;
         }
 
