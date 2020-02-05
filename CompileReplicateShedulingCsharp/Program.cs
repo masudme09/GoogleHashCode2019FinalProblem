@@ -16,6 +16,7 @@ namespace CompileReplicateShedulingCsharp
 
             output(filePath, false);
             Console.WriteLine();
+            listAllDependencies = null;
             output(filePath, true);
 
 
